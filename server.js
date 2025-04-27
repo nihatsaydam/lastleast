@@ -284,8 +284,11 @@ app.get('/cart-orders', async (req, res) => {
   // Yeni bir sohbet mesajı kaydeden endpoint
   app.post('/saveResponsee', async (req, res) => {
     try {
+      console.log('saveResponsee endpoint called with body:', JSON.stringify(req.body));
+      
       const { roomNumber, username, message, sender, language } = req.body;
       if (!roomNumber || !username || !message || !sender) {
+        console.log('Missing required fields:', { roomNumber, username, message, sender });
         return res.status(400).json({ success: false, message: 'Gerekli alanlar eksik.' });
       }
       
@@ -312,13 +315,20 @@ app.get('/cart-orders', async (req, res) => {
         });
       }
       
-      // Yeni mesaj kaydı eklenirken status otomatik olarak 'waiting' olacak
-      const newTech = new Tech({ roomNumber, username, message, sender, language });
-      await newTech.save();
-      res.status(200).json({ success: true, message: 'Mesaj kaydedildi!', data: newTech });
+      try {
+        // Yeni mesaj kaydı eklenirken status otomatik olarak 'waiting' olacak
+        const newTech = new Tech({ roomNumber, username, message, sender, language });
+        console.log('Attempting to save new Tech document:', newTech);
+        const savedTech = await newTech.save();
+        console.log('Successfully saved Tech document:', savedTech);
+        return res.status(200).json({ success: true, message: 'Mesaj kaydedildi!', data: savedTech });
+      } catch (saveError) {
+        console.error('MongoDB save error:', saveError);
+        return res.status(500).json({ success: false, message: `MongoDB kayıt hatası: ${saveError.message}` });
+      }
     } catch (err) {
-      console.error('Mesaj kaydedilirken hata oluştu:', err.message);
-      res.status(500).json({ success: false, message: 'Mesaj kaydedilirken hata oluştu.' });
+      console.error('Mesaj kaydedilirken hata oluştu:', err);
+      res.status(500).json({ success: false, message: 'Mesaj kaydedilirken hata oluştu.', error: err.message });
     }
   });
   
