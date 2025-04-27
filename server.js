@@ -6,13 +6,30 @@ const cors = require('cors');
 
 const app = express();
 
-// MongoDB Atlas bağlantısı
+// MongoDB Atlas bağlantısı - daha detaylı hata ayıklama ve bağlantı seçenekleri ile
+console.log('Attempting to connect to MongoDB Atlas...');
+
 mongoose
   .connect(
-    'mongodb+srv://nihatsaydam13131:nihat1234@keepsty.hrq40.mongodb.net/GreenP?retryWrites=true&w=majority&appName=Keepsty'
+    'mongodb+srv://nihatsaydam13131:nihat1234@keepsty.hrq40.mongodb.net/GreenP?retryWrites=true&w=majority&appName=Keepsty',
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 15000, // Sunucu seçimi için zaman aşımı
+      socketTimeoutMS: 45000, // Socket bağlantısı için zaman aşımı
+    }
   )
-  .then(() => console.log('Connected to MongoDB Atlas!'))
-  .catch((err) => console.error('Error connecting to MongoDB Atlas:', err));
+  .then(() => {
+    console.log('Connected to MongoDB Atlas successfully!');
+  })
+  .catch((err) => {
+    console.error('Error connecting to MongoDB Atlas:', err);
+    console.error('Connection details:', err.message);
+    
+    // IP adreslerini kontrol edin, gerektiğinde MongoDB Atlas'tan 0.0.0.0/0 ekleyerek tüm IP'lere izin verin
+    console.error('IMPORTANT: Make sure your IP address is whitelisted in MongoDB Atlas Network Access settings.');
+    console.error('For Google Cloud deployments, you may need to add 0.0.0.0/0 to allow all connections temporarily.');
+  });
 
 // CORS yapılandırması güncellendi
 app.use(cors({
