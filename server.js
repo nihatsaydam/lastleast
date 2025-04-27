@@ -61,7 +61,7 @@ app.post('/save-cleaning-option', async (req, res) => {
     // E-posta içeriğini oluşturma
     const mailOptions = {
       from: '"Housekeeping Uygulaması" <nihatsaydam13131@gmail.com>',
-      to: 'info@hotel54.com.tr,canberkugurlu@gmail.com',  // Bildirimi almak istediğiniz e-posta adresi
+      to: 'nihat.saydam@icloud.com',  // Bildirimi almak istediğiniz e-posta adresi
       subject: 'Yeni Temizlik Kaydı Oluşturuldu',
       text: `Yeni bir temizlik kaydı oluşturuldu.
 Kullanıcı: ${username}
