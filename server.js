@@ -14,8 +14,13 @@ mongoose
   .then(() => console.log('Connected to MongoDB Atlas!'))
   .catch((err) => console.error('Error connecting to MongoDB Atlas:', err));
 
-// Middleware
-app.use(cors());
+// CORS yapılandırması güncellendi
+app.use(cors({
+  origin: '*', // Tüm domainlerden gelen isteklere izin ver
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 app.use(express.static('public'));
 const nodemailer = require('nodemailer');
@@ -1041,7 +1046,7 @@ app.get('/ask2/:roomNumber', async (req, res) => {
     res.status(500).json({ success: false, error: 'Mesajlar çekilirken hata oluştu.' });
   }
 });
-// GET /getAskRequests endpoint’i
+// GET /getAskRequests endpoint'i
 app.get('/getAskRequests', async (req, res) => {
   try {
     // Veritabanından talepleri çek (örneğin, Ask modelin varsa)
